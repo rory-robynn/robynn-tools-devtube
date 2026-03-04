@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTube Roster (Web 1.0)</title>
+    <style>
+        body { font-family: "Verdana", Arial, Helvetica, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; font-size: 13px; }
+        a { color: #0000ee; text-decoration: none; }
+        a:hover { text-decoration: underline; color: #ff0000; }
+        a:visited { color: #551a8b; }
+        .header { background-color: #eeeeee; border-bottom: 2px solid #999999; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-family: "Times New Roman", Times, serif; font-size: 28px; font-weight: bold; color: #000000; letter-spacing: -1px; }
+        .logo span { background-color: #ff0000; color: #ffffff; padding: 2px 6px; border-radius: 4px; margin-left: 2px; font-family: Arial, sans-serif; font-size: 24px; }
+        .search-bar { background-color: #d5d5d5; padding: 8px 20px; border-bottom: 1px solid #999; display: flex; align-items: center; font-weight: bold; }
+        .search-bar input[type="text"] { width: 300px; padding: 3px; font-family: monospace; border: 1px inset #ccc; margin-left: 10px; }
+        .search-bar input[type="button"] { padding: 2px 10px; font-family: Arial; margin-left: 5px; background-color: #e0e0e0; border: 1px outset #fff; cursor: pointer; }
+        .search-bar input[type="button"]:active { border: 1px inset #fff; }
+        .container { display: flex; margin: 15px 20px; gap: 20px; }
+        .sidebar { width: 220px; flex-shrink: 0; }
+        .sidebar-box { border: 1px solid #999; margin-bottom: 15px; background-color: #f9f9f9; }
+        .sidebar-title { background-color: #cccccc; padding: 4px 8px; font-weight: bold; border-bottom: 1px solid #999; font-size: 12px; }
+        .sidebar-content { padding: 8px; line-height: 1.6; font-size: 12px; }
+        .sidebar-content a { display: block; margin-bottom: 4px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; }
+        .tab-bar { border-bottom: 1px solid #999; margin-bottom: 15px; padding-left: 5px; }
+        .tab { display: inline-block; padding: 4px 12px; background-color: #dddddd; border: 1px solid #999; border-bottom: none; font-weight: bold; color: #333; margin-right: 2px; cursor: pointer; font-size: 12px; }
+        .tab.active { background-color: #ffffff; border-bottom: 1px solid #ffffff; margin-bottom: -1px; color: #000; }
+        .video-list { display: flex; flex-direction: column; gap: 15px; }
+        .video-item { display: flex; gap: 15px; padding-bottom: 15px; border-bottom: 1px dashed #cccccc; }
+        .thumbnail-container { width: 100px; text-align: center; flex-shrink: 0; }
+        .thumbnail { width: 90px; height: 90px; background-color: #eeeeee; border: 1px solid #999; object-fit: cover; margin-bottom: 5px; }
+        .subs-badge { font-family: monospace; font-size: 11px; color: #cc0000; font-weight: bold; }
+        .video-info { flex-grow: 1; }
+        .video-title { font-size: 16px; font-weight: bold; margin: 0 0 4px 0; }
+        .video-meta { font-size: 11px; color: #666666; margin-bottom: 6px; font-family: monospace; }
+        .video-desc { font-size: 13px; color: #000000; margin-bottom: 6px; line-height: 1.4; }
+        .sponsor-fit { font-size: 11px; background-color: #ffffcc; padding: 3px 6px; border: 1px solid #cccc00; display: inline-block; color: #000; }
+        .action-btn { font-size: 11px; color: #006600; cursor: pointer; text-decoration: underline; font-weight: bold; }
+        .action-btn.remove { color: #cc0000; }
+        .cart-box { background-color: #ffffe0; border: 2px solid #cccc00; padding: 15px; margin-bottom: 25px; order: -1; }
+        .cart-title { font-size: 16px; font-weight: bold; color: #000000; margin-top: 0; border-bottom: 1px solid #cccc00; padding-bottom: 5px; }
+        .cart-items { margin-bottom: 15px; font-size: 12px; line-height: 1.5; }
+        .cart-stats { display: flex; gap: 30px; margin: 10px 0 15px 0; font-family: monospace; font-size: 14px; background: #fff; padding: 8px; border: 1px inset #ccc; }
+        .footer { text-align: center; padding: 20px; font-size: 11px; color: #666666; border-top: 2px solid #999; background-color: #eeeeee; line-height: 1.6; }
+        .button { background-color: #e0e0e0; border: 1px outset #fff; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-right: 8px; font-family: Arial; }
+        .button:active { border: 1px inset #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">DevTube<span>Roster</span></div>
+        <div style="font-size: 12px;">
+            <a href="#">Home</a> | 
+            <a href="#">Categories</a> | 
+            <a href="#">About</a>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        Search Channels:
+        <input type="text" id="searchInput" placeholder="Enter keyword (e.g. AI, React, Cloud)..." onkeyup="if(event.key === 'Enter') filterList()">
+        <input type="button" value="Search" onclick="filterList()">
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-box">
+                <div class="sidebar-title">Directory</div>
+                <div class="sidebar-content" id="categoryLinks">
+                    <!-- JS populated -->
+                </div>
+            </div>
+            
+            <div class="sidebar-box">
+                <div class="sidebar-title">About This Tool</div>
+                <div class="sidebar-content">
+                    B2B marketing to developers is broken.<br><br>
+                    We manually analyzed and compiled the top 25 technical YouTube channels accepting sponsorships in 2026.<br><br>
+                    Add channels to your campaign cart to estimate total reach and pricing, then export your roster.
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div class="cart-box" id="campaignCart" style="display:none;">
+                <h3 class="cart-title">Your Sponsorship Campaign</h3>
+                <div class="cart-items" id="cartItems"></div>
+                <div class="cart-stats">
+                    <div id="totalReach" style="color:#0000ee;"><strong>EST. REACH:</strong> 0 Devs</div>
+                    <div id="totalCost" style="color:#006600;"><strong>EST. BLENDED COST:</strong> $0</div>
+                </div>
+                <div>
+                    <button class="button" onclick="exportData('csv')">Export as CSV</button>
+                    <button class="button" onclick="exportData('json')">Export as JSON</button>
+                </div>
+            </div>
+
+            <div class="tab-bar">
+                <div class="tab active" id="currentTabLabel">All Channels</div>
+            </div>
+
+            <div class="video-list" id="channelList">
+                <!-- Populated by JS -->
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        Compiled manually because finding DevTools sponsors sucks.<br>
+        <br>
+        Built by the team at <a href="https://robynn.ai" target="_blank"><strong>Robynn</strong></a>.<br>
+        We build AI agents that automate the marketing tasks engineers hate doing.
+    </div>
+
+    <script>
+        // The full dataset from our research
+        const channels = [
+            // AI & ML
+            { id: 1, name: "Fireship", handle: "Fireship", cat: "AI & Machine Learning", subs: 3500000, views: 1200000, cpm: 45, desc: "High-tempo, humor-laced tech news and '100 seconds' code explainers.", fit: "Broad awareness. If you are launching a new product, this is the tech equivalent of a Super Bowl ad." },
+            { id: 2, name: "Yannic Kilcher", handle: "YannicKilcher", cat: "AI & Machine Learning", subs: 350000, views: 150000, cpm: 50, desc: "Hardcore AI paper breakdowns and ML news.", fit: "Deep-tech AI tools, model hosting, and ML monitoring platforms. Audience is actual researchers." },
+            { id: 3, name: "Two Minute Papers", handle: "TwoMinutePapers", cat: "AI & Machine Learning", subs: 1600000, views: 400000, cpm: 40, desc: "Enthusiastic visual breakdowns of cutting-edge AI research. 'What a time to be alive!'", fit: "Compute providers, graphic rendering engines, and AI hardware." },
+            { id: 4, name: "Krish Naik", handle: "krishnaik06", cat: "AI & Machine Learning", subs: 950000, views: 200000, cpm: 35, desc: "Extremely practical, end-to-end Machine Learning and Data Science tutorials.", fit: "Data engineering tools, MLOps platforms, and educational platforms." },
+            { id: 5, name: "Sentdex", handle: "sentdex", cat: "AI & Machine Learning", subs: 1300000, views: 150000, cpm: 40, desc: "Building complex Python/AI projects from scratch.", fit: "Python-native tools, robotics, and hardware APIs." },
+            { id: 6, name: "AI Engineer", handle: "swyxTV", cat: "AI & Machine Learning", subs: 80000, views: 30000, cpm: 55, desc: "The bleeding edge of the AI Engineering movement. Long-form interviews.", fit: "Agent frameworks, LLM APIs, and RAG infrastructure. Highly concentrated senior audience." },
+            
+            // Web Dev
+            { id: 7, name: "Programming with Mosh", handle: "programmingwithmosh", cat: "Full-Stack & Web", subs: 4000000, views: 800000, cpm: 40, desc: "Deep-dive, comprehensive crash courses.", fit: "Great for tools that require a bit of setup. Phenomenal at explaining complex architectures simply." },
+            { id: 8, name: "The Primeagen", handle: "ThePrimeagen", cat: "Full-Stack & Web", subs: 500000, views: 300000, cpm: 50, desc: "High-energy, Vim-loving, Netflix engineer reacting to tech news and roasting bad code.", fit: "Developer productivity tools, terminal utilities, and performance-focused backend tools." },
+            { id: 9, name: "Web Dev Simplified", handle: "WebDevSimplified", cat: "Full-Stack & Web", subs: 1600000, views: 450000, cpm: 35, desc: "Pure, unadulterated web development tutorials focusing on clean code.", fit: "CSS frameworks, component libraries, and beginner-friendly hosting." },
+            { id: 10, name: "Theo - t3.gg", handle: "t3dotgg", cat: "Full-Stack & Web", subs: 350000, views: 250000, cpm: 50, desc: "Opinionated, fast-talking former Twitch engineer building modern web stacks.", fit: "Modern TS/JS ecosystem tools, serverless databases, and Vercel competitors." },
+            { id: 11, name: "Kevin Powell", handle: "KevinPowell", cat: "Full-Stack & Web", subs: 950000, views: 200000, cpm: 40, desc: "The undisputed king of CSS on YouTube.", fit: "Design tools, frontend component libraries, and accessibility platforms." },
+            { id: 12, name: "Traversy Media", handle: "TraversyMedia", cat: "Full-Stack & Web", subs: 2200000, views: 300000, cpm: 35, desc: "The gold standard for project-based web development courses.", fit: "Bootcamps, full-stack hosting, and API services." },
+            { id: 13, name: "Syntax (Podcast)", handle: "syntaxfm", cat: "Full-Stack & Web", subs: 150000, views: 50000, cpm: 45, desc: "Two seasoned web developers talking shop.", fit: "E-commerce APIs, error tracking (Sentry), and full-stack tools." },
+
+            // Cloud & DevOps
+            { id: 14, name: "NetworkChuck", handle: "NetworkChuck", cat: "Cloud & DevOps", subs: 4000000, views: 1000000, cpm: 45, desc: "Enthusiastic, coffee-fueled networking, hacking, and cloud tutorials.", fit: "VPNs, cybersecurity platforms, homelab hardware, and cloud certs." },
+            { id: 15, name: "TechWorld with Nana", handle: "TechWorldwithNana", cat: "Cloud & DevOps", subs: 1100000, views: 350000, cpm: 55, desc: "The best Kubernetes and DevOps explainer on the internet.", fit: "Docker/K8s tooling, CI/CD pipelines, and infrastructure-as-code platforms." },
+            { id: 16, name: "Hussein Nasser", handle: "husseinnasser", cat: "Cloud & DevOps", subs: 300000, views: 100000, cpm: 45, desc: "Deep, whiteboard-style explanations of backend engineering and database internals.", fit: "Specialized databases, API gateways, and load balancing software." },
+            { id: 17, name: "DevOps Toolkit", handle: "DevOpsToolkit", cat: "Cloud & DevOps", subs: 120000, views: 40000, cpm: 50, desc: "Honest reviews and tutorials of the modern cloud-native landscape.", fit: "Kubernetes add-ons, GitOps tools, and platform engineering software." },
+            { id: 18, name: "Jeff Geerling", handle: "JeffGeerling", cat: "Cloud & DevOps", subs: 700000, views: 300000, cpm: 45, desc: "Raspberry Pi projects, hardware hacking, and Ansible automation.", fit: "Edge computing, IoT platforms, and open-source infrastructure." },
+            { id: 19, name: "Christian Lempa", handle: "christianlempa", cat: "Cloud & DevOps", subs: 250000, views: 80000, cpm: 45, desc: "Self-hosting, homelabs, and enterprise IT made accessible.", fit: "Open-source alternatives, server hardware, and virtualization software." },
+
+            // System Design
+            { id: 20, name: "ByteByteGo", handle: "ByteByteGo", cat: "System Design & Career", subs: 800000, views: 500000, cpm: 55, desc: "Beautifully animated, highly technical system design explanations.", fit: "Enterprise architecture tools, cloud providers, and observability platforms." },
+            { id: 21, name: "NeetCode", handle: "NeetCode", cat: "System Design & Career", subs: 700000, views: 250000, cpm: 35, desc: "The ultimate resource for algorithmic problem solving and interview prep.", fit: "Developer learning platforms, hiring marketplaces, and coding environments." },
+            { id: 22, name: "Joma Tech", handle: "jomatech", cat: "System Design & Career", subs: 2300000, views: 1000000, cpm: 30, desc: "High-production cinematic sketches about life in big tech.", fit: "Broad developer lifestyle products, ergonomic gear, and massive tech brands." },
+            { id: 23, name: "Alex Hyett", handle: "alexhyettdev", cat: "System Design & Career", subs: 100000, views: 40000, cpm: 40, desc: "Pragmatic career advice and software engineering best practices.", fit: "Developer productivity tools, time tracking, and Git clients." },
+            { id: 24, name: "John Crickett", handle: "JohnCrickett", cat: "System Design & Career", subs: 50000, views: 20000, cpm: 45, desc: "The creator of 'Coding Challenges', building real-world systems from scratch.", fit: "Advanced IDEs, low-level programming tools, and infrastructure." },
+            { id: 25, name: "Clément Mihailescu", handle: "clem", cat: "System Design & Career", subs: 750000, views: 200000, cpm: 40, desc: "Ex-Google/Ex-Meta software engineer sharing interview prep and tech commentary.", fit: "Interview prep services, algorithmic platforms, and tech recruitment." }
+        ];
+
+        // Categories
+        const categories = ["All Channels", "AI & Machine Learning", "Full-Stack & Web", "Cloud & DevOps", "System Design & Career"];
+        
+        let cart = [];
+        let currentFilter = 'All Channels';
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function formatMoney(num) {
+            return "$" + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function initSidebar() {
+            const catContainer = document.getElementById('categoryLinks');
+            catContainer.innerHTML = '';
+            
+            categories.forEach(cat => {
+                const count = cat === "All Channels" ? channels.length : channels.filter(c => c.cat === cat).length;
+                catContainer.innerHTML += '<a href="#" onclick="setCategory(\'' + cat + '\')">&raquo; ' + cat + ' (' + count + ')</a>';
+            });
+        }
+
+        function renderList(searchQuery = "") {
+            const list = document.getElementById('channelList');
+            list.innerHTML = '';
+
+            const filtered = channels.filter(c => {
+                const matchesCat = currentFilter === 'All Channels' || c.cat === currentFilter;
+                const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      c.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      c.cat.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if(filtered.length === 0) {
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No channels found matching your query.</div>';
+                return;
+            }
+
+            filtered.forEach(c => {
+                const estCost = Math.round((c.views / 1000) * c.cpm);
+                const inCart = cart.some(item => item.id === c.id);
+                
+                let html = '<div class="video-item">';
+                html += '<div class="thumbnail-container">';
+                html += '<a href="https://www.youtube.com/@' + c.handle + '" target="_blank">';
+                html += '<img src="https://unavatar.io/youtube/' + c.handle + '" class="thumbnail" onerror="this.src=\'https://via.placeholder.com/90?text=YT\'"/>';
+                html += '</a>';
+                html += '<div class="subs-badge">' + (c.subs/1000000).toFixed(1) + 'M subs</div>';
+                html += '</div>';
+                
+                html += '<div class="video-info">';
+                html += '<h4 class="video-title"><a href="https://www.youtube.com/@' + c.handle + '" target="_blank">' + c.name + '</a></h4>';
+                html += '<div class="video-meta">Category: ' + c.cat + ' | Est. Views: ' + formatNumber(c.views) + ' | Est. CPM: $' + c.cpm + ' | <strong>Cost: ' + formatMoney(estCost) + '</strong></div>';
+                html += '<div class="video-desc">' + c.desc + '</div>';
+                html += '<div class="sponsor-fit"><strong>Best Fit:</strong> ' + c.fit + '</div>';
+                html += '<div style="margin-top: 8px;"><span class="action-btn ' + (inCart ? 'remove' : '') + '" onclick="toggleCart(' + c.id + ')">' + (inCart ? '[-] Remove from Campaign' : '[+] Add to Campaign') + '</span></div>';
+                html += '</div></div>';
+                list.innerHTML += html;
+            });
+        }
+
+        function setCategory(cat) {
+            currentFilter = cat;
+            document.getElementById('currentTabLabel').innerText = cat;
+            document.getElementById('searchInput').value = '';
+            renderList();
+        }
+
+        function filterList() {
+            const query = document.getElementById('searchInput').value;
+            renderList(query);
+        }
+
+        function toggleCart(id) {
+            const index = cart.findIndex(c => c.id === id);
+            if (index > -1) {
+                cart.splice(index, 1);
+            } else {
+                const channel = channels.find(c => c.id === id);
+                cart.push(channel);
+            }
+            updateCart();
+            renderList(document.getElementById('searchInput').value);
+        }
+
+        function updateCart() {
+            const cartBox = document.getElementById('campaignCart');
+            const cartItems = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                cartBox.style.display = 'none';
+                return;
+            }
+
+            cartBox.style.display = 'block';
+            
+            let html = '<table width="100%" cellspacing="0" cellpadding="4" style="border-collapse: collapse;">';
+            html += '<tr style="background-color:#cccc00; text-align:left;"><th>Channel</th><th>Category</th><th>Est. Reach</th><th>Est. Cost</th></tr>';
+            
+            let totalViews = 0;
+            let totalCost = 0;
+
+            cart.forEach((c, idx) => {
+                const cost = Math.round((c.views / 1000) * c.cpm);
+                totalViews += c.views;
+                totalCost += cost;
+                
+                const bg = idx % 2 === 0 ? '#ffffe0' : '#ffffcc';
+                html += '<tr style="background-color:' + bg + '; border-bottom:1px solid #ddd;">';
+                html += '<td><a href="https://www.youtube.com/@' + c.handle + '" target="_blank"><strong>' + c.name + '</strong></a></td>';
+                html += '<td>' + c.cat + '</td>';
+                html += '<td>' + formatNumber(c.views) + '</td>';
+                html += '<td>' + formatMoney(cost) + '</td>';
+                html += '</tr>';
+            });
+            html += '</table>';
+            
+            cartItems.innerHTML = html;
+
+            document.getElementById('totalReach').innerHTML = '<strong>EST. REACH:</strong> ' + formatNumber(totalViews) + ' Devs';
+            document.getElementById('totalCost').innerHTML = '<strong>EST. BLENDED COST:</strong> ' + formatMoney(totalCost);
+        }
+
+        function exportData(type) {
+            if(cart.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+
+            let dataStr, mimeType, filename;
+
+            if (type === 'json') {
+                dataStr = JSON.stringify(cart, null, 2);
+                mimeType = 'application/json';
+                filename = 'devtools_campaign_roster.json';
+            } else if (type === 'csv') {
+                const headers = ['Channel Name', 'URL', 'Category', 'Subscribers', 'Est. Views', 'Est. CPM', 'Est. Cost', 'Best Fit'];
+                const rows = cart.map(c => {
+                    const cost = Math.round((c.views / 1000) * c.cpm);
+                    const url = 'https://www.youtube.com/@' + c.handle;
+                    return '"' + c.name + '","' + url + '","' + c.cat + '",' + c.subs + ',' + c.views + ',' + c.cpm + ',' + cost + ',"' + c.fit.replace(/"/g, '""') + '"';
+                });
+                dataStr = [headers.join(','), ...rows].join('\n');
+                mimeType = 'text/csv';
+                filename = 'devtools_campaign_roster.csv';
+            }
+
+            const blob = new Blob([dataStr], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize App
+        initSidebar();
+        renderList();
+    </script>
+</body>
+</html>
