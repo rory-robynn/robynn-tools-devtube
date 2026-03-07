@@ -119,7 +119,7 @@
         // The full dataset from our research
         const channels = [
             // AI & ML
-            { id: 1, name: "Fireship", handle: "Fireship", cat: "AI & Machine Learning", subs: 3500000, views: 1200000, cpm: 45, desc: "High-tempo, humor-laced tech news and '100 seconds' code explainers.", fit: "Broad awareness. If you are launching a new product, this is the tech equivalent of a Super Bowl ad." },
+            { id: 1, name: "Fireship", handle: "Fireship", cat: "AI & Machine Learning", subs: 3500000, views: 1200000, cpm: 45, desc: "High-tempo, humor-laced tech news and '100 seconds' code explainers.", fit: "Broad awareness. If you are launching a new product, this is the tech equivalent of a Super Bowl ad.", contact: "https://www.passionfroot.me/fireship" },
             { id: 2, name: "Yannic Kilcher", handle: "YannicKilcher", cat: "AI & Machine Learning", subs: 350000, views: 150000, cpm: 50, desc: "Hardcore AI paper breakdowns and ML news.", fit: "Deep-tech AI tools, model hosting, and ML monitoring platforms. Audience is actual researchers." },
             { id: 3, name: "Two Minute Papers", handle: "TwoMinutePapers", cat: "AI & Machine Learning", subs: 1600000, views: 400000, cpm: 40, desc: "Enthusiastic visual breakdowns of cutting-edge AI research. 'What a time to be alive!'", fit: "Compute providers, graphic rendering engines, and AI hardware." },
             { id: 4, name: "Krish Naik", handle: "krishnaik06", cat: "AI & Machine Learning", subs: 950000, views: 200000, cpm: 35, desc: "Extremely practical, end-to-end Machine Learning and Data Science tutorials.", fit: "Data engineering tools, MLOps platforms, and educational platforms." },
@@ -150,9 +150,9 @@
             { id: 23, name: "Alex Hyett", handle: "alexhyettdev", cat: "System Design & Career", subs: 100000, views: 40000, cpm: 40, desc: "Pragmatic career advice and software engineering best practices.", fit: "Developer productivity tools, time tracking, and Git clients." },
             { id: 24, name: "John Crickett", handle: "JohnCrickett", cat: "System Design & Career", subs: 50000, views: 20000, cpm: 45, desc: "The creator of 'Coding Challenges', building real-world systems from scratch.", fit: "Advanced IDEs, low-level programming tools, and infrastructure." },
             { id: 25, name: "Clément Mihailescu", handle: "clem", cat: "System Design & Career", subs: 750000, views: 200000, cpm: 40, desc: "Ex-Google/Ex-Meta software engineer sharing interview prep and tech commentary.", fit: "Interview prep services, algorithmic platforms, and tech recruitment." },
-            { id: 26, name: "Nate Herk", handle: "nateherk", cat: "AI & Machine Learning", subs: 230000, views: 80000, cpm: 45, desc: "Practical AI automation workflows, lead generation, and business growth.", fit: "Sales automation tools, AI agents, scraping tools, and workflow platforms." },
-            { id: 27, name: "Rasmic", handle: "rasmic", cat: "Full-Stack & Web", subs: 120000, views: 40000, cpm: 45, desc: "AI coding workflows, full-stack development, and modern developer tools.", fit: "AI coding assistants (Windsurf, Cursor), backend-as-a-service platforms, and frontend frameworks." },
-            { id: 28, name: "In The World of AI", handle: "intheworldofai", cat: "AI & Machine Learning", subs: 200000, views: 60000, cpm: 40, desc: "Daily updates on the newest AI tools, models, and open-source projects.", fit: "AI agents, model APIs, vector databases, and AI learning resources." }
+            { id: 26, name: "Nate Herk", handle: "nateherk", cat: "AI & Machine Learning", subs: 230000, views: 80000, cpm: 45, desc: "Practical AI automation workflows, lead generation, and business growth.", fit: "Sales automation tools, AI agents, scraping tools, and workflow platforms.", contact: "mailto:nate@uppit.ai" },
+            { id: 27, name: "Rasmic", handle: "rasmic", cat: "Full-Stack & Web", subs: 120000, views: 40000, cpm: 45, desc: "AI coding workflows, full-stack development, and modern developer tools.", fit: "AI coding assistants (Windsurf, Cursor), backend-as-a-service platforms, and frontend frameworks.", contact: "https://passionfroot.me/rasmic" },
+            { id: 28, name: "In The World of AI", handle: "intheworldofai", cat: "AI & Machine Learning", subs: 200000, views: 60000, cpm: 40, desc: "Daily updates on the newest AI tools, models, and open-source projects.", fit: "AI agents, model APIs, vector databases, and AI learning resources.", contact: "mailto:intheworldofai@gmail.com" }
         ];
 
         // Categories
@@ -213,7 +213,8 @@
                 html += '<div class="video-meta">Category: ' + c.cat + ' | Est. Views: ' + formatNumber(c.views) + ' | Est. CPM: $' + c.cpm + ' | <strong>Cost: ' + formatMoney(estCost) + '</strong></div>';
                 html += '<div class="video-desc">' + c.desc + '</div>';
                 html += '<div class="sponsor-fit"><strong>Best Fit:</strong> ' + c.fit + '</div>';
-                html += '<div style="margin-top: 8px;"><span class="action-btn ' + (inCart ? 'remove' : '') + '" onclick="toggleCart(' + c.id + ')">' + (inCart ? '[-] Remove from Campaign' : '[+] Add to Campaign') + '</span></div>';
+                const contactLink = c.contact ? '<a href="' + c.contact + '" target="_blank" style="margin-left: 15px; color: #cc0000; font-weight: bold; font-size: 14px; text-decoration: none;">[✉️ Reach Out]</a>' : '';
+                html += '<div style="margin-top: 8px;"><span class="action-btn ' + (inCart ? 'remove' : '') + '" onclick="toggleCart(' + c.id + ')">' + (inCart ? '[-] Remove from Campaign' : '[+] Add to Campaign') + '</span>' + contactLink + '</div>';
                 html += '</div></div>';
                 list.innerHTML += html;
             });
